@@ -33,8 +33,6 @@ router.post("/signup", async (req, res) => {
       },
     };
     const authToken = jwt.sign(data, JWT_SECRET);
-    res.cookie("jwt", authToken);
-    console.log(cookie);
     res.status(200).json({ success: true, auth_token: authToken });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
