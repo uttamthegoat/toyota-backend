@@ -1,25 +1,13 @@
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const CustomError = require("../utilities/CustomError");
+const DuplicateKeyError = require("../utilities/DuplicateKeyError");
 // JWT secret key
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const signup = async (req, res, next) => {
   try {
     let user = await User.findOne({ name: req.body.name });
-    if (user) {
-      // return res.status(400).json({
-      //   success: false,
-      //   error: "Sorry! A user with this credentials alreasy exists",
-      // });
-      const err1 = new CustomError(
-        400,
-        false,
-        "Sorry! A user with this credentials alreasy exists"
-      );
-      next(err1);
-    }
 
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(req.body.password, salt);
@@ -40,8 +28,16 @@ const signup = async (req, res, next) => {
       .status(201)
       .json({ success: true, message: "Signup successful", user: user });
   } catch (error) {
-    const err = new CustomError(500, false, error.message);
-    next(err);
+    if (error.code === 11000) {
+      const err = new DuplicateKeyError(
+        400,
+        false,
+        "Sorry! A user with this credentials alreasy exists"
+      );
+      next(err);
+    } else {
+      next(error);
+    }
   }
 };
 
