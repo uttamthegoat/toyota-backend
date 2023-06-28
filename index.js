@@ -10,8 +10,8 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT
 const cookieParser = require("cookie-parser");
-const CustomError = require("./utilities/CustomError");
-const GlobalErrorHandler = require("./errors/GlobalErrorHandler");
+const CustomError = require("./errors/CustomError");
+const GlobalErrorHandler = require("./middleware/GlobalErrorHandler");
 
 app.use(cors());
 app.use(cookieParser());

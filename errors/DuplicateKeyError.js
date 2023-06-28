@@ -4,6 +4,7 @@ class DuplicateKeyError extends Error {
     this.name = "DuplicateKeyError";
     this.statusCode = statusCode;
     this.success = success;
+    this.message=message
   }
 }
 
