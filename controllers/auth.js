@@ -2,13 +2,16 @@ const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-const DuplicateKeyError = require("../errors/DuplicateKeyError");
+// const DuplicateKeyError = require("../errors/DuplicateKeyError");
 const CustomError = require("../errors/CustomError");
 
 // signup
 const signup = async (req, res, next) => {
   try {
     let user = await User.findOne({ name: req.body.name });
+    if (user) {
+      throw new CustomError(400, false, "User Already exisits");
+    }
 
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(req.body.password, salt);
@@ -29,16 +32,7 @@ const signup = async (req, res, next) => {
       .status(201)
       .json({ success: true, message: "Signup successful", user: user });
   } catch (error) {
-    if (error.code === 11000) {
-      const err = new DuplicateKeyError(
-        400,
-        false,
-        "Sorry! A user with this credentials alreasy exists"
-      );
-      next(err);
-    } else {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -70,12 +64,10 @@ const login = async (req, res, next) => {
 };
 
 // logout
-const logout = async (req,res,next)=>{
-
-}
+const logout = async (req, res, next) => {};
 
 // user details
-const userDetails = async (req,res,next)=>{
+const userDetails = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId).select("-password");
@@ -83,6 +75,6 @@ const userDetails = async (req,res,next)=>{
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message });
   }
-}
+};
 
-module.exports = { signup, login,logout,userDetails };
+module.exports = { signup, login, logout, userDetails };

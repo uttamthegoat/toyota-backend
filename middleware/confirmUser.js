@@ -1,17 +1,15 @@
 var jwt = require("jsonwebtoken");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
+const CustomError = require("../errors/CustomError");
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const confirmUser = (req, res, next) => {
   try {
-    // GET user id from jwt token and add id to req object
     const token = req.cookies.access_token;
     if (!token) {
-      return res
-        .status(401)
-        .json({ error: "Please authenticate using a valid token" });
+      throw new CustomError(401, false, "Please login again");
     }
     const data = jwt.verify(token, JWT_SECRET_KEY);
     req.user = {
@@ -19,9 +17,7 @@ const confirmUser = (req, res, next) => {
     };
     next();
   } catch (error) {
-    res
-      .status(401)
-      .json({ error: error.message });
+    next(error);
   }
 };
 
