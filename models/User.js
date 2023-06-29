@@ -12,12 +12,15 @@ const userSchema = new Schema(
       required: true,
     },
     role: {
-      type: String,             // 
-      required: true,
+      type: Schema.Types.ObjectId,             
       ref: "Role",
+      required: true,
     },
   },
   { timestamps: true }
 );
 
 module.exports = model("User", userSchema);
+
+
+//  add empId, in signup route

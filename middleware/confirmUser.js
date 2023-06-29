@@ -9,7 +9,7 @@ const confirmUser = (req, res, next) => {
   try {
     const token = req.cookies.access_token;
     if (!token) {
-      throw new CustomError(401, false, "Please login again");
+      throw new CustomError(401, false, "Please login first");
     }
     const data = jwt.verify(token, JWT_SECRET_KEY);
     req.user = {
