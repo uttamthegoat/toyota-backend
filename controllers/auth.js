@@ -23,7 +23,7 @@ const signup = async (req, res, next) => {
     });
     const savedUser = await user.save();
     const payload = {
-      id: user._id,
+      id: user.id,
     };
     const auth_token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: 86000 }); // confirm expiration
     res
