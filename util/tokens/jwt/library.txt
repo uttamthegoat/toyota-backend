@@ -1,0 +1,118 @@
+create table PUBLISHER(
+Name varchar(20),
+address varchar(10),
+phone number(10),
+primary key(Name)
+);
+
+insert into PUBLISHER values( 'yashwanth','banglore',9745626745);
+insert into PUBLISHER values( 'lakshmi','hassan',9745626756);
+insert into PUBLISHER values( 'chinthan','kodagu',9745756745);
+insert into PUBLISHER values( 'kathad','manglore',9745626895);
+
+create table BOOk1(
+Book_id varchar(5),
+title varchar(10),
+publisher_name varchar(20),
+pub_year number(4),
+primary key(Book_id),
+foreign key(publisher_name) references PUBLISHER(Name)
+);
+
+insert into BOOk1 values('long','papercraft','yashwanth',2004);
+insert into BOOk1 values('6573e','paperboat','lakshmi',2023);
+insert into BOOk1 values('6281q','artbook','chinthan',2043);
+insert into BOOk1 values('6928t','bafnagold','kathad',2054);
+
+
+create table Book_authors(
+Book_id varchar(5),
+author_name varchar(20),
+foreign key(Book_id) references BOOk1(Book_id) on delete cascade);
+
+insert into Book_authors values('long','rajan');
+insert into Book_authors values('6573e','rajeev');
+insert into Book_authors values('6281q','james');
+insert into Book_authors values('6928t','alexndar');
+
+create table Library_programme(
+programme_id number(4),
+programme_name varchar(20),
+address varchar(20),
+primary key(programme_id)
+);
+
+insert into Library_programme values( 4673, 'crafting','dubai');
+insert into Library_programme values( 7564, 'treeking','chennai');
+insert into Library_programme values( 9272, 'drawing','Banglore');
+insert into Library_programme values( 7563, 'arting','mumbai');
+
+create table Book_copies(
+Book_id varchar(5),
+programme_id number(4),
+no_of_copies number(4),
+primary key(Book_id,programme_id),
+foreign key(Book_id) references BOOk1(Book_id) on delete cascade,
+foreign key(programme_id) references Library_programme(programme_id));
+
+insert into Book_copies values('long',4673,50);
+insert into Book_copies values('6573e',7564,68);
+insert into Book_copies values('6281q',9272,98);
+insert into Book_copies values('6928t',7563,90);
+
+
+create table Card(
+card_no number(6),
+primary key(card_no));
+ 
+insert into card values(87563);
+insert into card values(87565);
+insert into card values(87567);
+insert into card values(87569);
+
+create table Book_Lending(
+Book_id varchar(5),
+programme_id number(4),
+card_no number(6),
+date_out date,
+due_date date,
+primary key(Book_id,programme_id,card_no),
+foreign key(Book_id) references BOOk1(Book_id) on delete cascade,
+foreign key(programme_id) selreferences Library_programme(programme_id),
+foreign key(card_no) references Card(card_no)
+);
+
+insert into Book_Lending values('long',4673,87563,'02-jan-2017','05-jan-2017');
+insert into Book_Lending values('6573e',7564,87563,'02-jan-2017','05-jan-2017');
+insert into Book_Lending values('6281q',9272,87563,'02-jan-2017','05-jan-2017');
+insert into Book_Lending values('6928t',9272,87563,'02-jan-2017','05-jan-2017');
+
+
+Queries
+
+1) select B.Book_id,B.title,A.author_name,P.Name,C.no_of_copies,L.programme_id
+from BOOk1 B, Book_authors A, PUBLISHER P, Book_copies C,Library_programme L
+where B.publisher_name=P.Name AND B.Book_id=C.Book_id AND L.programme_id=C.programme_id;
+
+2) select card_no
+from Book_Lending
+where date_out Between '01-jan-2017' AND '01-jul-2017'
+group by card_no
+having count(*)>=1;
+
+
+3) delete from BOOk1 where Book_id='6928t';
+select * from BOOk1;
+select * from Book_copies;
+select * from Book_Lending;
+
+4) create view v_publication as
+   select pub_year
+   from BOOk1;
+   select * from v_publication;
+
+5) create view v_BOOk1 as
+   select B.Book_id,B.title,C.no_of_copies
+   from BOOk1 B,Book_copies C,Library_programme L
+   where B.Book_id=C.Book_id AND L.programme_id=C.programme_id;
+   select * from v_BOOk1;

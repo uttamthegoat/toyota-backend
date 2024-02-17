@@ -1,0 +1,96 @@
+create table SALESMAN(
+salesman_id number(5),
+Name varchar(20),
+city varchar(10),
+commission number(10),
+primary key(salesman_id));
+
+insert into SALESMAN values(1000,'cbum','russia',10000);
+insert into SALESMAN values(1001,'roman','italy',5000);
+insert into SALESMAN values(1002,'rocky_balboa','america',130000);
+insert into SALESMAN values(1004,'sam sulek','russia',7000);
+insert into SALESMAN values(1005,'creed','india',50000);
+insert into SALESMAN values(1003,'cbum','russia',10000);
+
+create table CUSTOMER(
+customer_id number(5),
+customer_name varchar(10),
+city varchar(10),
+Grade number(10),
+salesman_id number(5),
+primary key(customer_id),
+foreign key(salesman_id) references SALESMAN(salesman_id) on delete set null);
+
+insert into CUSTOMER values(0102,'yashwanth','bangalore',100,1000);
+insert into CUSTOMER values(0104,'lakshmi','hassan',101,1001);
+insert into CUSTOMER values(0105,'karthik','hospete',102,1002);
+insert into CUSTOMER values(0107,'chinthan','mysore',103,1004);
+insert into CUSTOMER values(0109,'kathad','mangalore',100,1005);
+insert into CUSTOMER values(0108,'yashwanth','mumbai',101,1000);
+
+create table ORDERS(
+order_no number(5),
+purchase_id number(5),
+order_date date,
+customer_id number(5),
+salesman_id number(5),
+primary key(salesman_id ,customer_id),
+foreign key(salesman_id) references SALESMAN(salesman_id) on delete cascade,
+foreign key(customer_id) references CUSTOMER(customer_id) on delete cascade);
+
+
+insert into ORDERS values(54621,7980,'02-jul-2023',0102,1000);
+insert into ORDERS values(54622,7980,'30-jan-2023',0104,1001);
+insert into ORDERS values(54623,7980,'30-dec-2023',0105,1002);
+insert into ORDERS values(54625,7980,'08-sep-2023',0107,1004);
+insert into ORDERS values(54625,7980,'21-jun-2023',0109,1005);
+
+
+QUERIES:-
+
+1).select Grade,count(distinct customer_id)
+from CUSTOMER 
+group by Grade
+having Grade>(select AVG(Grade)
+from CUSTOMER
+where city='bangalore');
+
+2).select salesman_id,name
+from SALESMAN S
+where 1<(select count(*)
+from CUSTOMER
+where salesman_id=S.salesman_id);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

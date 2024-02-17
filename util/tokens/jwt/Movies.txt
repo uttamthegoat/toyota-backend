@@ -1,0 +1,170 @@
+create table ACTOR(
+actId number(5),
+act_name varchar(20),
+act_gender varchar(1),
+primary key(actId));
+
+insert into ACTOR values(100,'prabhas','M');
+insert into ACTOR values(101,'Rana','M');
+insert into ACTOR values(102,'Nani','M');
+insert into ACTOR values(103,'Anushka','F');
+insert into ACTOR values(104,'Allu arjun','M');
+
+select * from ACTOR;
+
+     ACTID ACT_NAME             A
+---------- -------------------- -
+       100 prabhas              M
+       101 Rana                 M
+       102 Nani                 M
+       103 Anushka              F
+       104 Allu arjun           M
+
+
+create table DIRECTOR(
+dir_id number(5),
+dir_name varchar(20),
+dir_phone number(10),
+primary key(dir_id));
+
+insert into DIRECTOR values(10,'Rajamouli',9754621320);
+insert into DIRECTOR values(20,'Hitchcock',7534627920);
+insert into DIRECTOR values(30,'Polish shetty',6548642320);
+insert into DIRECTOR values(40,'Steven spielberg',7546213209);
+
+ select * from DIRECTOR;
+
+    DIR_ID DIR_NAME              DIR_PHONE
+---------- -------------------- ----------
+        10 Rajamouli            9754621320
+        20 Hitchcock            7534627920
+        30 Polish shetty        6548642320
+        40 Steven spielberg     7546213209
+
+create table MOVIES(
+mov_id number(5),
+mov_title varchar(20),
+mov_year number(4),
+mov_lang varchar(10),
+dir_id number(5),
+primary key(mov_id),
+foreign key(dir_id)references DIRECTOR(dir_id));
+
+insert into MOVIES values(1001,'Bahubali-1',2015,'telugu',10);
+insert into MOVIES values(1002,'Bahubali-2',2018,'telugu',10);
+insert into MOVIES values(1003,'HiNanna',2023,'telugu',20);
+insert into MOVIES values(1004,'Mr.polish shetty',2023,'tamil',30);
+insert into MOVIES values(1005,'Bahubali-1',2008,'telugu',40);
+
+select * from MOVIES;
+
+    MOV_ID MOV_TITLE              MOV_YEAR MOV_LANG       DIR_ID
+---------- -------------------- ---------- ---------- ----------
+      1001 Bahubali-1                 2015 telugu             10
+      1002 Bahubali-2                 2018 telugu             10
+      1003 HiNanna                    2023 telugu             20
+      1004 Mr.polish shetty           2023 tamil              30
+      1005 Bahubali-1                 2008 telugu             40
+
+create table MOVIE_CAST(
+actId number(5),
+mov_id number(5),
+role varchar(10),
+primary key(actId ,mov_id),
+foreign key(actId )references ACTOR(actId ),
+foreign key(mov_id)references MOVIES(mov_id));
+
+insert into MOVIE_CAST values(100,1001,'Hero');
+insert into MOVIE_CAST values(101,1002,'villian');
+insert into MOVIE_CAST values(102,1003,'Hero');
+insert into MOVIE_CAST values(103,1004,'Heroine');
+insert into MOVIE_CAST values(104,1005,'childACT');
+
+ select * from MOVIE_CAST;
+
+     ACTID     MOV_ID ROLE
+---------- ---------- ----------
+       100       1001 Hero
+       101       1002 villian
+       102       1003 Hero
+       103       1004 Heroine
+       104       1005 childACT
+
+create table RATING(
+mov_id number(5),
+rev_stars number(5),
+foreign key(mov_id)references MOVIES(mov_id));
+
+insert into RATING values(1001,5);
+insert into RATING values(1002,5);
+insert into RATING values(1003,4);
+insert into RATING values(1004,3);
+insert into RATING values(1005,2.5);
+
+ SELECT * FROM RATING;
+
+    MOV_ID  REV_STARS
+---------- ----------
+      1001          5
+      1002          5
+      1003          4
+      1004          3
+      1005          5
+
+QUERIES:-
+
+1.select mov_title
+from MOVIES
+WHERE dir_id IN(select dir_id 
+from DIRECTOR where dir_name='Hitchcock');
+
+MOV_TITLE
+--------------------
+HiNanna
+
+2.SELECT mov_title
+FROM MOVIES M, MOVIE_CAST MV
+WHERE M.mov_id=MV.mov_id AND actId IN (SELECT actId
+FROM MOVIE_CAST GROUP BY actId HAVING COUNT (actId)>1)
+GROUP BY mov_title HAVING
+COUNT (*)>1;
+
+NO ROWS SELECTED
+
+3.select act_name,mov_title ,mov_year
+from ACTOR A join
+MOVIE_CAST C
+ON A.actId=C.actId JOIN
+MOVIES M
+ON C.mov_id=M.mov_id
+WHERE M.mov_year NOT BETWEEN 2000 AND 2015;
+
+ACT_NAME             MOV_TITLE              MOV_YEAR
+-------------------- -------------------- ----------
+Rana                 Bahubali-2                 2018
+Nani                 HiNanna                    2023
+Anushka              Mr.polish shetty           2023
+
+4.SELECT mov_title, MAX(rev_stars)
+FROM MOVIES
+INNER JOIN RATING USING (mov_id) GROUP BY
+mov_title
+HAVING MAX (rev_stars)>0 
+ORDER BY mov_title;
+
+5.UPDATE RATING SET
+rev_stars=5
+WHERE mov_id IN (SELECT mov_id FROM MOVIES
+WHERE dir_id  IN (SELECT dir_id  
+FROM DIRECTOR
+WHERE dir_name='Steven spielberg'));
+
+ SELECT * FROM RATING;
+
+    MOV_ID  REV_STARS
+---------- ----------
+      1001          5
+      1002          5
+      1003          4
+      1004          3
+      1005          5

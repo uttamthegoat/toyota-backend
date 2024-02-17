@@ -1,0 +1,185 @@
+CREATE TABLE STUDENT1(
+USN VARCHAR (10) PRIMARY KEY,
+SNAME VARCHAR (25),
+ADDRESS VARCHAR (25),
+PHONE NUMBER (10),
+GENDER CHAR (1));
+
+INSERT INTO STUDENT1 VALUES('4MT21CS020','Yashwanth','Blore', 7881122887,'M');
+INSERT INTO STUDENT1 VALUES('4MT21CS022','Lakshmi','Hassan', 8811228877,'M');
+INSERT INTO STUDENT1 VALUES('4MT21CS023','Yuva','Blore', 8888117722,'M');
+INSERT INTO STUDENT1 VALUES('4MT21CS024','Rajan','Tumkur', 7788112882,'M');
+INSERT INTO STUDENT1 VALUES('4MT21CS025','GK','Mumbai', 8881127782,'M');
+
+CREATE TABLE SEMSEC (
+SSID VARCHAR (5) PRIMARY KEY,
+SEM NUMBER (2),
+SEC CHAR (1));
+
+insert into SEMSEC values('Cse3',5,'A');
+insert into SEMSEC values('ae1',5,'A');
+insert into SEMSEC values('cse3',4,'B');
+insert into SEMSEC values('me3',5,'C');
+insert into SEMSEC values('ise3',3,'A');
+
+
+CREATE TABLE CLASS( 
+USN VARCHAR (10),
+SSID VARCHAR (5),
+PRIMARY KEY (USN,SSID),
+FOREIGN KEY (USN) REFERENCES STUDENT1(USN),
+FOREIGN KEY (SSID) REFERENCES SEMSEC (SSID));
+
+
+insert into CLASS values('4MT21CS020','Cse3');
+insert into CLASS values('4MT21CS022','ae1');
+insert into CLASS values('4MT21CS023','Cse3');
+insert into CLASS values('4MT21CS024','me3');
+insert into CLASS values('4MT21CS025','ise3');
+
+CREATE TABLE SUBJECT( 
+SUBCODE VARCHAR (8),
+TITLE VARCHAR (20),
+SEM NUMBER (2),
+CREDITS NUMBER (2),
+PRIMARY KEY(SUBCODE));
+
+insert into SUBJECT values('21cs53','dbms',5,3);
+insert into SUBJECT values('21ae51','rob cad',5,1);
+insert into SUBJECT values('21cs41','M4',4,3);
+insert into SUBJECT values('21me53','autocad',5,4);
+insert into SUBJECT values('21is31','M3',3,3);
+
+CREATE TABLE IAMARKS (
+USN VARCHAR (10),
+SUBCODE VARCHAR (8),
+SSID VARCHAR (5),
+TEST1 NUMBER (2),
+TEST2 NUMBER (2),
+TEST3 NUMBER (2),
+FINALIA NUMBER (2),
+PRIMARY KEY (USN, SUBCODE, SSID),
+FOREIGN KEY (USN) REFERENCES STUDENT1(USN),
+FOREIGN KEY (SUBCODE) REFERENCES SUBJECT (SUBCODE),
+FOREIGN KEY (SSID) REFERENCES SEMSEC (SSID));
+
+insert into IAMARKS (USN, SUBCODE, SSID, TEST1, TEST2, TEST3) values('4MT21CS020','21cs53','Cse3',19,18,20);
+insert into IAMARKS (USN, SUBCODE, SSID, TEST1, TEST2, TEST3) values('4MT21CS022','21ae51','ae1',18,20,20);
+insert into IAMARKS (USN, SUBCODE, SSID, TEST1, TEST2, TEST3) values('4MT21CS023','21cs41','Cse3',12,16,17);
+insert into IAMARKS (USN, SUBCODE, SSID, TEST1, TEST2, TEST3) values('4MT21CS024','21me53','me3',11,8,12);
+insert into IAMARKS (USN, SUBCODE, SSID, TEST1, TEST2, TEST3) values('4MT21CS025','21is31','ise3',9,8,11);
+
+
+queries:
+
+1)
+SELECT S.*, SS.SEM, SS.SEC
+FROM STUDENT1 S, SEMSEC SS, CLASS C
+WHERE S.USN = C.USN AND
+SS.SSID = C.SSID AND
+SS.SEM = 5 AND 
+SS.SEC='C';
+
+USN        SNAME                     ADDRESS                        PHONE G
+---------- ------------------------- ------------------------- ---------- -
+       SEM S
+---------- -
+4MT21CS024 Rajan                     Tumkur                    7788112882 M
+         5 C
+
+
+2)
+SELECT SS.SEM, SS.SEC, S.GENDER, COUNT (S.GENDER) AS COUNT 
+FROM STUDENT1 S, SEMSEC SS, CLASS C
+WHERE S.USN = C.USN AND
+SS.SSID = C.SSID
+GROUP BY SS.SEM, SS.SEC, S.GENDER
+ORDER BY SEM;
+
+       SEM S G      COUNT
+---------- - - ----------
+         3 A M          1
+         5 A M          3
+         5 C M          1
+
+3)
+CREATE VIEW STU_TEST1_MARKS_VIEW AS
+SELECT TEST1, SUBCODE
+FROM IAMARKS
+WHERE USN = '4MT21CS020';
+SELECT * FROM STU_TEST1_MARKS_VIEW;
+
+     TEST1 SUBCODE
+---------- --------
+        19 21cs53
+
+
+4)
+CREATE OR REPLACE PROCEDURE AVGMARKS IS
+CURSOR C_IAMARKS IS
+SELECT GREATEST(TEST1,TEST2) AS A, GREATEST(TEST1,TEST3) AS B, GREATEST(TEST3,TEST2) AS C
+FROM IAMARKS
+WHERE FINALIA IS NULL
+FOR UPDATE;
+C_A NUMBER;
+C_B NUMBER;
+C_C NUMBER;
+C_SM NUMBER;
+C_AV NUMBER;
+BEGIN
+OPEN C_IAMARKS;
+LOOP
+FETCH C_IAMARKS INTO C_A, C_B, C_C; EXIT
+WHEN C_IAMARKS%NOTFOUND;
+--DBMS_OUTPUT.PUT_LINE(C_A || ' ' || C_B || ' ' || C_C); 
+IF (C_A!= C_B) 
+THEN
+C_SM:=C_A+C_B; 
+ELSE
+C_SM:=C_A+C_C;
+END IF;
+C_AV:=C_SM/2;
+--DBMS_OUTPUT.PUT_LINE('SUM = '||C_SM);
+--DBMS_OUTPUT.PUT_LINE('AVERAGE = '||C_AV);
+UPDATE IAMARKS SET FINALIA=C_AV WHERE CURRENT OF C_IAMARKS;
+END LOOP;
+CLOSE C_IAMARKS;
+END;
+/
+
+BEGIN 
+AVGMARKS; 
+END; 
+/
+SELECT * FROM IAMARKS;
+
+USN        SUBCODE  SSID       TEST1      TEST2      TEST3    FINALIA
+---------- -------- ----- ---------- ---------- ---------- ----------
+4MT21CS020 21cs53   Cse3          19         18         20         20
+4MT21CS022 21ae51   ae1           18         20         20         20
+4MT21CS023 21cs41   Cse3          12         16         17         17
+4MT21CS024 21me53   me3           11          8         12         12
+4MT21CS025 21is31   ise3           9          8         11         10
+
+5)
+SELECT S.USN,S.SNAME,S.ADDRESS,S.PHONE,S.GENDER,
+(CASE WHEN IA.FINALIA BETWEEN 17 AND 20 THEN 'OUTSTANDING' 
+WHEN IA.FINALIA BETWEEN 12 AND 16 THEN 'AVERAGE' ELSE 'WEAK' END) 
+AS CAT FROM STUDENT1 S, SEMSEC SS, IAMARKS IA, SUBJECT SUB 
+WHERE S.USN = IA.USN AND 
+SS.SSID = IA.SSID AND 
+SUB.SUBCODE = IA.SUBCODE AND 
+SUB.SEM = 5; 
+
+USN        SNAME                     ADDRESS                        PHONE G
+---------- ------------------------- ------------------------- ---------- -
+CAT
+-----------
+4MT21CS020 Yashwanth                 Blore                     7881122887 M
+OUTSTANDING
+
+4MT21CS022 Lakshmi                   Hassan                    8811228877 M
+OUTSTANDING
+
+4MT21CS024 Rajan                     Tumkur                    7788112882 M
+AVERAGE
