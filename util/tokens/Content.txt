@@ -1,0 +1,34 @@
+01Python for Data Science
+Introducing Python - Python Basics, Operators, Loops, Functions, Strings, List, Tuples, Dictionary, Set, Object-oriented concepts(OOPs) and much more.
+ 
+Data Toolkit - Getting started with Files, Inventory Management System with Files, Inventory Management System with JSON, Mastering Numpy Arrays, Getting started with OS , Jupyter Notebook Setup, OS with Python, etc.
+02Data Analytics
+Data Analysis with Python - Getting started with Pandas, Statistics, Data Preprocessing, Data Analysis
+Projects: Black Friday Sales Data Analysis, Data Visualization on Heart Disease Dataset, GDP Analysis
+ 
+Excel - Data Formatting & Validation, Functions, Illustrations, Tables & Charts, VB Analysis, etc.
+ 
+SQL - DBMS & MySQL, Tables & Databases, Inserting & Retrieving Data, Data Types, Constraints, Aggregation, Joins, Unions, Indexes, Transactions, Injection, DLC & TLD Commands, Function, Views, Normalization, etc.
+Projects: Banking Project using MySQL and Python, Banking Project using PostgreSQL and Python
+03Data Visualization and Scraping
+Tableau - Introduction to Tableau, Understanding Parameters, Basic Plots, Fundamentals of Tableau, Designing the Plots, etc
+Projects: Superstore Sales Analysis Dashboard, Covid-19 World Dashboard
+ 
+Web Scraping - Learn how to Scrape, Selenium, Image Dataset Creation, and much more
+Projects: Wikipedia Scraper, Youtube Scrapper, Stock Images Infinite Scroll
+04Machine Learning & AI
+Introduction to AI, How Data Science Comes into Play, 
+Linear Regression, Multiple Linear Regression & Polynomial Linear Regression,
+Support Vector Machines, Decision Trees, Random Forests,
+Classification Algorithms, Clustering Algorithms, Feature Engineering, and much more
+Projects - 
+MNIST Handwritten Digit Recogniser, Titanic Survival | EDA,
+PubG Predictive Analysis, Human Activity Recognition using Smartphone data,
+Predicting solar Irradiance
+05Specialization
+Deep Learning - Perceptrons, Multi-layer perceptron architecture, and Convolutional Neural Network (CNN)
+ 
+Image Processing - Fundamentals of Image Formation, Image Processing Techniques, Image Processing on Live WebCam, Taking a Selfie Program with OpenCV, Image Manipulation, DIY Instagram Filters, Masking, Adding Logo on a Live VideoFace Detection and Manipulation
+ 
+Natural Language Processing - Getting Started with NLP, Mastering Strings and ASCII Codes, Regular Expression from Scratch, Getting started with Spacy, Text Sequencing using Word Cloud, and much more
+Project: Spell Checker, Guessing the title of a Corpus
